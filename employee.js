@@ -30,6 +30,8 @@ function start() {
         message: "What would you like to do?",
         choices: [
           "View All Employees",
+          "View All Departments",
+          "View All Roles",
           "View All Employees by Department",
           "View All Employees by Manager",
           "Add Employee",
@@ -45,7 +47,15 @@ function start() {
         case "View All Employees":
           viewAll();
           break;
+
+        case "View All Departments":
+          viewAllDept();
+          break;  
   
+        case "View All Roles":
+          viewAllRole();
+          break;
+
         case "View All Employees by Department":
           viewByDept();
           break;
@@ -85,14 +95,38 @@ function start() {
 
 // ===== VIEW ALL EMPLOYEES======
 viewAll = () => {
-    var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.dept_name, role.salary, CONCAT(manager.name, ' ', manager.last_name";
-      query += "FROM employee LEFT JOIN role ON employee.role_id = role.role_id LEFT JOIN department ON role.dept_id = department_id";
-      query += "LEFT JOIN employee manager ON manager.manager_id = employee.manager_id";
-    connection.query(query, function(err, res) {
-        console.table(res)
+    // var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.dept_name, role.salary, CONCAT(manager.name, ' ', manager.last_name";
+    //   query += "FROM employee LEFT JOIN role ON (employee.role_id = role.id) LEFT JOIN department ON (role.dept_id = department.id)";
+    //   query += "LEFT JOIN employee manager ON (manager.manager_id = employee.manager_id)";
+    connection.query("SELECT * FROM employee", function(err, res) {
+        if (err) throw err;
+              console.table(res);
+              start();
         start()
     });
 };
+
+
+// ===== VIEW ALL DEPARTMENTS======
+
+function viewAllDept() {
+    connection.query("SELECT * FROM department", function(err, res) {
+        if (err) throw err;
+              console.table(res);
+              start();
+    })
+}
+
+// ===== VIEW ALL DEPARTMENTS======
+
+viewAllRole = () => {
+    connection.query("SELECT * FROM role", function(err, res) {
+        if (err) throw err;
+              console.table(res);
+              start();
+    })
+}
+
 
 // ===== VIEW ALL EMPLOYEES BY DEPT ======
 
@@ -204,3 +238,4 @@ addRole = () => {
         })
     })
 }
+
