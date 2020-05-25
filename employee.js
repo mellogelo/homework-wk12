@@ -33,6 +33,8 @@ function start() {
           "View All Employees by Department",
           "View All Employees by Manager",
           "Add Employee",
+          "Add Department",
+          "Add Role",
           "Remove Employee",
           "Update Employee Role",
           "Update Employee Manager"
@@ -55,6 +57,14 @@ function start() {
         case "Add Employee":
           addEmployee();
           break;
+
+        case "Add Department":
+          addDepartment();
+          break;
+
+        case "Add Role":
+          addRole();
+          break;  
   
         case "Remove Employee":
           removeEmployee();
@@ -73,6 +83,7 @@ function start() {
 
 // ========== EACH QUESTION PROMPT ================
 
+// ===== VIEW ALL EMPLOYEES======
 viewAll = () => {
     var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.dept_name, role.salary, CONCAT(manager.name, ' ', manager.last_name";
       query += "FROM employee LEFT JOIN role ON employee.role_id = role.role_id LEFT JOIN department ON role.dept_id = department_id";
@@ -83,34 +94,36 @@ viewAll = () => {
     });
 };
 
-viewByDepartment = () => {
-    connection.query("SELECT * FROM department", function(err, results) {
-        if (err) throw err;
-        inquirer
-        .prompt({
-            name: "department",
-            type: "rawlist",
-            message: "Search by Department",
-            choices: function() {
-                var departmentAll = [];
-        for (var i = 0; i < results.length; i++) {
-          departmentAll.push(results[i].dept_name);
-        }
-        return departmentAll;
-        }
-        })
-        .then(function(answer) {
-            connection.query("SELECT * FROM employee", function(err, results) {
-                for (var i = 0; i < res.length; i++) {
-                    console.table("Position: " + res[i].position + " || Song: " + res[i].song + " || Year: " + res[i].year);
-                }
-                runSearch();
-            });
-        });
-    });
-};
+// ===== VIEW ALL EMPLOYEES BY DEPT ======
 
+// viewByDepartment = () => {
+//     connection.query("SELECT * FROM department", function(err, results) {
+//         if (err) throw err;
+//         inquirer
+//         .prompt({
+//             name: "department",
+//             type: "rawlist",
+//             message: "Search by Department",
+//             choices: function() {
+//                 var departmentAll = [];
+//         for (var i = 0; i < results.length; i++) {
+//           departmentAll.push(results[i].dept_name);
+//         }
+//         return departmentAll;
+//         }
+//         })
+//         .then(function(answer) {
+//             connection.query("SELECT * FROM employee", function(err, results) {
+//                 for (var i = 0; i < res.length; i++) {
+//                     console.table("Position: " + res[i].position + " || Song: " + res[i].song + " || Year: " + res[i].year);
+//                 }
+//                 start();
+//             });
+//         });
+//     });
+// };
 
+// ===== ADD EMPLOYEE ======
 addEmployee = () => {
     inquirer.prompt([
         {
@@ -138,7 +151,56 @@ addEmployee = () => {
             connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.eeFirstName, answer.eeLastName, answer.roleID, answer.managerID], function(err, res) {
               if (err) throw err;
               console.table(res);
-              startScreen();
+              start();
             });
           });
+}
+
+// ===== ADD DEPARTMENT ======
+
+addDepartment = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What's new department name?",
+            name: "newDept"
+        }
+    ])
+    .then(function(answer) {
+        connection.query("INSERT INTO department (dept_name) VALUES (?)", [answer.newDept], function(err, res) {
+            if (err) throw err;
+              console.table(res);
+              start();
+        })
+    })
+}
+
+// ===== ADD ROLE ======
+
+addRole = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What's the title for the new role?",
+            name: "newRole"
+        },
+        {
+            type: "input",
+            message: "What's the salary?",
+            name: "roleSalary"
+        },
+        {
+            type: "input",
+            message: "What is the department id?",
+            name: "newdeptId"
+        },
+
+    ])
+    .then(function(answer) {
+        connection.query("INSERT INTO role (title, salary, dept_id) VALUES (?, ?, ?)", [answer.newRole, answer.roleSalary, answer.newdeptId], function(err, res) {
+            if (err) throw err;
+              console.table(res);
+              start();
+        })
+    })
 }
