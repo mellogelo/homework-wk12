@@ -74,11 +74,17 @@ function start() {
 // ========== EACH QUESTION PROMPT ================
 
 viewAll = () => {
-    var query = "SELECT employee.id, employee.first_name, employee.last_name";
-      query += "FROM top_albums INNER JOIN top5000 ON (top_albums.artist = top5000.artist AND top_albums.year ";
-      query += "= top5000.year) WHERE (top_albums.artist = ? AND top5000.artist = ?) ORDER BY top_albums.year, top_albums.position";
+    var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.dept_name, role.salary, CONCAT(manager.name, ' ', manager.last_name";
+      query += "FROM employee LEFT JOIN role ON employee.role_id = role.role_id LEFT JOIN department ON role.dept_id = department_id";
+      query += "LEFT JOIN employee manager ON manager.manager_id = employee.manager_id";
     connection.query(query, function(err, res) {
         console.log(res)
-        connection.end();
+        start()
     })
+}
+
+viewByDepartment = () => {
+    connection.query("SELECT * FROM department", function(err, res) {
+        
+    }
 }
