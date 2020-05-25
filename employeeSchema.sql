@@ -31,3 +31,5 @@ CREATE TABLE department (
   dept_name varchar(30) NOT NULL,
   PRIMARY KEY (id)
 );
+
+ALTER TABLE role MODIFY salary INT(10) NOT NULL;
