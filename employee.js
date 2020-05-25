@@ -78,13 +78,35 @@ viewAll = () => {
       query += "FROM employee LEFT JOIN role ON employee.role_id = role.role_id LEFT JOIN department ON role.dept_id = department_id";
       query += "LEFT JOIN employee manager ON manager.manager_id = employee.manager_id";
     connection.query(query, function(err, res) {
-        console.log(res)
+        console.table(res)
         start()
     })
 }
 
 viewByDepartment = () => {
-    connection.query("SELECT * FROM department", function(err, res) {
-        
+    connection.query("SELECT * FROM department", function(err, results) {
+        if (err) throw err;
+    inquirer
+    .prompt({
+      name: "department",
+      type: "rawlist",
+      message: "Search by Department",
+      choices: function() {
+        var departmentAll = [];
+        for (var i = 0; i < res.length; i++) {
+          choiceArray.push(results[i].item_name);
+        }
+        return choiceArray;
+    })
+    .then(function(answer) {
+      var query = "SELECT position, song, year FROM top5000 WHERE ?";
+      connection.query(query, { artist: answer.artist }, function(err, res) {
+        for (var i = 0; i < res.length; i++) {
+          console.log("Position: " + res[i].position + " || Song: " + res[i].song + " || Year: " + res[i].year);
+        }
+        runSearch();
+      });
+    });
+
     }
 }
