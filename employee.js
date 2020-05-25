@@ -70,3 +70,15 @@ function start() {
         }
       });
   }
+
+// ========== EACH QUESTION PROMPT ================
+
+viewAll = () => {
+    var query = "SELECT top_albums.year, top_albums.album, top_albums.position, top5000.song, top5000.artist ";
+      query += "FROM top_albums INNER JOIN top5000 ON (top_albums.artist = top5000.artist AND top_albums.year ";
+      query += "= top5000.year) WHERE (top_albums.artist = ? AND top5000.artist = ?) ORDER BY top_albums.year, top_albums.position";
+    connection.query(query, function(err, res) {
+        console.log(res)
+        connection.end();
+    })
+}

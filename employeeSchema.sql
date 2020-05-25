@@ -20,7 +20,7 @@ CREATE TABLE employee (
 CREATE TABLE role (
   id int NOT NULL AUTO_INCREMENT,
   title varchar(30) NOT NULL,
-  salary DECIMAL(6,2) NOT NULL.
+  salary DECIMAL(6,2) NOT NULL,
   dept_id INT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (dept_id) REFERENCES department(id)
