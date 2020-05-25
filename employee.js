@@ -69,7 +69,7 @@ function start() {
           break;
         }
       });
-  }
+  };
 
 // ========== EACH QUESTION PROMPT ================
 
@@ -80,33 +80,65 @@ viewAll = () => {
     connection.query(query, function(err, res) {
         console.table(res)
         start()
-    })
-}
+    });
+};
 
 viewByDepartment = () => {
     connection.query("SELECT * FROM department", function(err, results) {
         if (err) throw err;
-    inquirer
-    .prompt({
-      name: "department",
-      type: "rawlist",
-      message: "Search by Department",
-      choices: function() {
-        var departmentAll = [];
-        for (var i = 0; i < res.length; i++) {
-          choiceArray.push(results[i].item_name);
+        inquirer
+        .prompt({
+            name: "department",
+            type: "rawlist",
+            message: "Search by Department",
+            choices: function() {
+                var departmentAll = [];
+        for (var i = 0; i < results.length; i++) {
+          departmentAll.push(results[i].dept_name);
         }
-        return choiceArray;
-    })
-    .then(function(answer) {
-      var query = "SELECT position, song, year FROM top5000 WHERE ?";
-      connection.query(query, { artist: answer.artist }, function(err, res) {
-        for (var i = 0; i < res.length; i++) {
-          console.log("Position: " + res[i].position + " || Song: " + res[i].song + " || Year: " + res[i].year);
+        return departmentAll;
         }
-        runSearch();
-      });
+        })
+        .then(function(answer) {
+            connection.query("SELECT * FROM employee", function(err, results) {
+                for (var i = 0; i < res.length; i++) {
+                    console.table("Position: " + res[i].position + " || Song: " + res[i].song + " || Year: " + res[i].year);
+                }
+                runSearch();
+            });
+        });
     });
+};
 
-    }
+
+addEmployee = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What's the first name of the employee?",
+            name: "eeFirstName"
+        },
+        {
+            type: "input",
+            message: "What's the last name of the employee?",
+            name: "eeLastName"
+        },
+        {
+            type: "input",
+            message: "What is the employee's role id number?",
+            name: "roleID"
+        },
+        {
+            type: "input",
+            message: "What is the manager id number?",
+            name: "managerID"
+        }
+        ])
+        .then(function(answer) {
+            connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.eeFirstName, answer.eeLastName, answer.roleID, answer.managerID], function(err, res) {
+              if (err) throw err;
+              console.table(res);
+              startScreen();
+            });
+          });
 }
